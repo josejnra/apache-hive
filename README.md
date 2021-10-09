@@ -54,7 +54,7 @@ Here are the main Hive and HBase differences that you should know in grasping th
 - Hive for Data Analysis has shown tremendous results in several industry aspects.
 
 # Referencies
-- [Hive](https://towardsdatascience.com/making-big-moves-in-big-data-with-hadoop-hive-parquet-hue-and-docker-320a52ca175)
 - [Hive Free Book](https://github.com/Prokopp/the-free-hive-book/blob/master/the-free-hive-book.md#introduction)
 - [Hive Architecture](https://cwiki.apache.org/confluence/display/Hive/Design)
 - [What is Hive](https://www.jigsawacademy.com/blogs/business-analytics/what-is-hive/)
+- [Hadoop, Hive, Parquet, Hue and Docker](https://towardsdatascience.com/making-big-moves-in-big-data-with-hadoop-hive-parquet-hue-and-docker-320a52ca175)
