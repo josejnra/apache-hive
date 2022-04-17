@@ -40,7 +40,7 @@ services:
     env_file:
       - ./hadoop-hive.env
     ports: 
-      - 8088:8088
+      - "8089:8088"
 
   hive-server:
     image: bde2020/hive:2.3.2-postgresql-metastore
@@ -79,11 +79,11 @@ services:
         SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432 resourcemanager:8088 hive-metastore:9083"
   
   hue:
-    image: hue:4.10.0
+    image: gethue/hue:4.10.0
     environment:
         SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432 resourcemanager:8088 hive-metastore:9083 huedb:5000"
     ports:
-      - "8888:8888"
+      - "8889:8888"
     volumes:
       - ./hue-overrides.ini:/usr/share/hue/desktop/conf/hue-overrides.ini
     links:
