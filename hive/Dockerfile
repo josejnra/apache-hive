@@ -1,32 +1,59 @@
-FROM azul/zulu-openjdk-debian:11.0.11
+FROM openjdk:8
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y software-properties-common \
+                       ssh \
+                       pdsh \
+                       openssh-server \
+                       rsync \
+                       net-tools \
+                       vim \
+                       python3-pip
+
+# create ssh
+RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+    chmod 0600 ~/.ssh/authorized_keys
 
 WORKDIR /opt
 
-ENV HADOOP_HOME=/opt/hadoop-2.10.1
-ENV HIVE_HOME=/opt/apache-hive-2.3.9-bin
+ENV HADOOP_VERSION 3.3.2
+ENV HIVE_VERSION 3.1.3
+
+ENV HADOOP_HOME=/opt/hadoop-${HADOOP_VERSION}
+ENV HIVE_HOME=/opt/apache-hive-${HIVE_VERSION}-bin
+
 # Include additional jars
-ENV HADOOP_CLASSPATH=/opt/hadoop-2.10.1/share/hadoop/tools/lib/aws-java-sdk-bundle-1.11.271.jar:/opt/hadoop-2.10.1/share/hadoop/tools/lib/hadoop-aws-2.10.1.jar
+ENV HADOOP_CLASSPATH=/opt/hadoop-${HADOOP_VERSION}/share/hadoop/tools/lib/aws-java-sdk-bundle-1.11.271.jar:/opt/hadoop-${HADOOP_VERSION}/share/hadoop/tools/lib/hadoop-aws-${HADOOP_VERSION}.jar
 
-RUN apt-get update && \
-    apt-get -qqy install curl && \
-    curl -L https://ftp.unicamp.br/pub/apache/hive/hive-2.3.9/apache-hive-2.3.9-bin.tar.gz | tar zxf - && \
-    curl -L https://ftp.unicamp.br/pub/apache/hadoop/common/hadoop-2.10.1/hadoop-2.10.1.tar.gz | tar zxf - && \
-    apt-get install --only-upgrade openssl libssl1.1 && \
-    apt-get install -y libk5crypto3 libkrb5-3 libsqlite3-0
+RUN curl -L https://dlcdn.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz | tar zxf -
 
-RUN rm ${HIVE_HOME}/lib/postgresql-9.4.1208.jre7.jar
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+    tar zxf hadoop-${HADOOP_VERSION}.tar.gz && \
+    rm -r hadoop-${HADOOP_VERSION}.tar.gz
 
-RUN curl -o ${HIVE_HOME}/lib/postgresql-9.4.1212.jre7.jar -L https://jdbc.postgresql.org/download/postgresql-9.4.1212.jre7.jar
+RUN rm ${HIVE_HOME}/lib/postgresql-9.4.1208.jre7.jar && \
+    curl -o ${HIVE_HOME}/lib/postgresql-9.4.1212.jre7.jar -L https://jdbc.postgresql.org/download/postgresql-9.4.1212.jre7.jar
 
-COPY conf ${HIVE_HOME}/conf
+ENV PATH=$PATH:/opt/hadoop-${HADOOP_VERSION}/bin:/opt/apache-hive-${HIVE_VERSION}-bin/bin
 
-RUN groupadd -r hive --gid=1000 && \
-    useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \
-    chown hive:hive -R ${HIVE_HOME}
+# Hadoop env
+ENV HDFS_NAMENODE_USER root
+ENV HDFS_DATANODE_USER root
+ENV HDFS_SECONDARYNAMENODE_USER root
+ENV YARN_RESOURCEMANAGER_USER root
+ENV YARN_NODEMANAGER_USER root
+ENV YARN_CONF_DIR /opt/hadoop-${HADOOP_VERSION}/etc/hadoop
+ENV HADOOP_HOME /opt/hadoop-${HADOOP_VERSION}
+ENV HADOOP_LOG_DIR $HADOOP_HOME/logs
+ENV HADOOP_CONF_DIR /opt/hadoop-${HADOOP_VERSION}/etc/hadoop
+ENV LD_LIBRARY_PATH /opt/hadoop-${HADOOP_VERSION}/lib/native:$LD_LIBRARY_PATH
 
-USER hive
+#USER hive
 WORKDIR $HIVE_HOME
-EXPOSE 9083
 
-ENTRYPOINT ["bin/hive"]
-CMD ["--service", "metastore"]
+# expose several ports
+EXPOSE 9871 9870 9869 9868 9867 9866 9865 9864 9820 9000 9083 8088
+
+ENTRYPOINT ["/bin/bash"]
