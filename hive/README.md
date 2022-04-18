@@ -2,6 +2,10 @@
 schematool -initSchema -dbType postgres -passWord hive -userName hive
 ```
 
+```shell
+hive
+```
+
 ```hive
 CREATE TABLE IF NOT EXISTS employee ( eid int, name String,
 salary String, destination String)
