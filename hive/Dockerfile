@@ -18,7 +18,7 @@ RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
 
 WORKDIR /opt
 
-ENV HADOOP_VERSION 3.3.2
+ENV HADOOP_VERSION 3.4.0
 ENV HIVE_VERSION 3.1.3
 
 ENV HADOOP_HOME=/opt/hadoop-${HADOOP_VERSION}
@@ -29,7 +29,7 @@ ENV HADOOP_CLASSPATH=/opt/hadoop-${HADOOP_VERSION}/share/hadoop/tools/lib/aws-ja
 
 RUN curl -L https://dlcdn.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz | tar zxf -
 
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+RUN wget https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
     tar zxf hadoop-${HADOOP_VERSION}.tar.gz && \
     rm -r hadoop-${HADOOP_VERSION}.tar.gz
 

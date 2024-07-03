@@ -53,6 +53,12 @@ Here are the main Hive and HBase differences that you should know in grasping th
 - Perform tasks at an unprecedented pace with improved results.
 - Hive for Data Analysis has shown tremendous results in several industry aspects.
 
+## Running it locally
+
+```shell
+docker compose up -d
+```
+
 # Referencies
 - [Hive Free Book](https://github.com/Prokopp/the-free-hive-book/blob/master/the-free-hive-book.md#introduction)
 - [Hive Architecture](https://cwiki.apache.org/confluence/display/Hive/Design)

@@ -1,64 +1,62 @@
-version: '3.7'
-
 services:
+  postgres:
+    image: postgres:16.3
+    restart: unless-stopped
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_DB: 'metastore_db'
+      POSTGRES_USER: 'hive'
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - '5432:5432'
+    # volumes:
+    #   - hive-db:/var/lib/postgresql
+    networks:
+      - hive
 
-   hive-metastore:
-     image: hive-metastore:3.1.3
-     build:
-       context: ./hive
-       dockerfile: Dockerfile
-     container_name: hive-metastore
-     volumes:
-       - ./hive/conf/hive-site.xml:/opt/apache-hive-3.1.3-bin/conf/hive-site.xml
-       - ./hive/conf/hive-env.sh:/opt/apache-hive-3.1.3-bin/conf/hive-env.sh
-       - ./hive/conf/core-site.xml:/opt/hadoop-3.3.2/etc/hadoop/core-site.xml
-       - ./hive/conf/hdfs-site.xml:/opt/hadoop-3.3.2/etc/hadoop/hdfs-site.xml
-       - ./hive/conf/mapred-site.xml:/opt/hadoop-3.3.2/etc/hadoop/mapred-site.xml
-       - ./hive/conf/yarn-site.xml:/opt/hadoop-3.3.2/etc/hadoop/yarn-site.xml
-     ports:
-       - "9083:9083" # Hive
-       - "8088:8088" # Resource Manager UI
-       - "8042:8042" # Node
-       - "9864:9864" # Datanode port
-       - "9870:9870" # HDFS UI
-     command:
-       - "-c"
-       - |
-         echo "Starting ssh service..."
-         service ssh start
-         ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+  metastore:
+    image: apache/hive:4.0.0
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    container_name: metastore
+    hostname: metastore
+    environment:
+      DB_DRIVER: postgres
+      SERVICE_NAME: 'metastore'
+      SERVICE_OPTS: '-Xmx1G -Djavax.jdo.option.ConnectionDriverName=org.postgresql.Driver
+                     -Djavax.jdo.option.ConnectionURL=jdbc:postgresql://postgres:5432/metastore_db
+                     -Djavax.jdo.option.ConnectionUserName=hive
+                     -Djavax.jdo.option.ConnectionPassword=password'
+    ports:
+        - '9083:9083'
+    volumes:
+        - ./postgresql-42.7.3.jar:/opt/hive/lib/postgres.jar
+        # https://jdbc.postgresql.org/download/postgresql-42.7.3.jar
+        # - warehouse:/opt/hive/data/warehouse
+    networks:
+      - hive
 
-         echo "Formating the filesystem..."
-         hdfs namenode -format
+  hiveserver2:
+    image: apache/hive:4.0.0
+    depends_on:
+      - metastore
+    restart: unless-stopped
+    container_name: hiveserver2
+    environment:
+      HIVE_SERVER2_THRIFT_PORT: 10000
+      SERVICE_OPTS: '-Xmx1G -Dhive.metastore.uris=thrift://metastore:9083'
+      IS_RESUME: 'true'
+      SERVICE_NAME: 'hiveserver2'
+    ports:
+      - '10000:10000'
+      - '10002:10002'
+    # volumes:
+    #   - warehouse:/opt/hive/data/warehouse
+    networks:
+      - hive
 
-         echo "Starting NameNode, DataNode, Resource Manager and Node Manager..."
-         hdfs --daemon start namenode
-         hdfs --daemon start datanode
-         yarn --daemon start resourcemanager
-         yarn --daemon start nodemanager
-
-         echo "Creating the HDFS directories required to execute MapReduce jobs..."
-         hdfs dfs -mkdir /user
-         hdfs dfs -mkdir /user/$$(whoami)
-
-         echo "Starting hive metastore"
-         schematool -initSchema -dbType postgres -passWord hive -userName hive
-         # tail -f /opt/hadoop-$${HADOOP_VERSION}/logs/*log
-         tail -f /tmp/root/hive.log
-
-   postgres:
-     image: postgres:9.4.26
-     container_name: postgres
-     environment:
-       POSTGRES_DB: metastore
-       POSTGRES_USER: hive
-       POSTGRES_PASSWORD: hive
-
-   pgadmin:
-     image: dpage/pgadmin4:6.4
-     container_name: pgadmin
-     environment:
-       - PGADMIN_DEFAULT_EMAIL=user@domain.com
-       - PGADMIN_DEFAULT_PASSWORD=root
-     ports:
-       - "8080:80"
+networks:
+  hive:
+    name: hive
