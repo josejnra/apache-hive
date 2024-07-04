@@ -16,10 +16,30 @@
   <property>
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
+    <description>A comma separated list of services where service name should only contain a-zA-Z0-9_ and can not start with numbers</description>
   </property>
 
   <property>
       <name>yarn.nodemanager.env-whitelist</name>
       <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_HOME,PATH,LANG,TZ,HADOOP_MAPRED_HOME</value>
+      <description>Environment variables that containers may override rather than use NodeManager's default.</description>
+  </property>
+
+  <property>
+      <name>yarn.nodemanager.hostname</name>
+      <value>0.0.0.0</value>
+      <description>The hostname of the NM.</description>
+  </property>
+
+  <property>
+      <name>yarn.resourcemanager.admin.address</name>
+      <value>${yarn.nodemanager.hostname}:8033</value>
+      <description>The address of the RM admin interface.</description>
+  </property>
+
+  <property>
+      <name>yarn.nodemanager.webapp.address</name>
+      <value>${yarn.nodemanager.hostname}:8042</value>
+      <description>NM Webapp address.</description>
   </property>
 </configuration>

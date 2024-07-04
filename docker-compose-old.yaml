@@ -2,20 +2,20 @@ services:
    hive-metastore:
      image: hive-metastore:3.1.3
      build:
-       context: ./hive
+       context: ./conf
        dockerfile: Dockerfile
      container_name: hive-metastore
      volumes:
-       - ./hive/conf/hive-site.xml:/opt/apache-hive-3.1.3-bin/conf/hive-site.xml
-       - ./hive/conf/hive-env.sh:/opt/apache-hive-3.1.3-bin/conf/hive-env.sh
-       - ./hive/conf/core-site.xml:/opt/hadoop-3.4.0/etc/hadoop/core-site.xml
-       - ./hive/conf/hdfs-site.xml:/opt/hadoop-3.4.0/etc/hadoop/hdfs-site.xml
-       - ./hive/conf/mapred-site.xml:/opt/hadoop-3.4.0/etc/hadoop/mapred-site.xml
-       - ./hive/conf/yarn-site.xml:/opt/hadoop-3.4.0/etc/hadoop/yarn-site.xml
+       - ./conf/hive/hive-site.xml:/opt/apache-hive-3.1.3-bin/conf/hive-site.xml
+      #  - ./conf/hive/hive-env.sh:/opt/apache-hive-3.1.3-bin/conf/hive-env.sh
+       - ./conf/hadoop/core-site.xml:/opt/hadoop-3.4.0/etc/hadoop/core-site.xml
+       - ./conf/hadoop/hdfs-site.xml:/opt/hadoop-3.4.0/etc/hadoop/hdfs-site.xml
+       - ./conf/hadoop/mapred-site.xml:/opt/hadoop-3.4.0/etc/hadoop/mapred-site.xml
+       - ./conf/hadoop/yarn-site.xml:/opt/hadoop-3.4.0/etc/hadoop/yarn-site.xml
      ports:
        - "9083:9083" # Hive
        - "8088:8088" # Resource Manager UI
-       - "8042:8042" # Node
+       - "8042:8042" # Nodemanager UI
        - "9864:9864" # Datanode port
        - "9870:9870" # HDFS UI
      command:
@@ -51,11 +51,11 @@ services:
        POSTGRES_USER: hive
        POSTGRES_PASSWORD: hive
 
-   pgadmin:
-     image: dpage/pgadmin4:6.4
-     container_name: pgadmin
-     environment:
-       - PGADMIN_DEFAULT_EMAIL=user@domain.com
-       - PGADMIN_DEFAULT_PASSWORD=root
-     ports:
-       - "8080:80"
+  #  pgadmin:
+  #    image: dpage/pgadmin4:6.4
+  #    container_name: pgadmin
+  #    environment:
+  #      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+  #      - PGADMIN_DEFAULT_PASSWORD=root
+  #    ports:
+  #      - "8080:80"

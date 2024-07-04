@@ -64,3 +64,4 @@ docker compose up -d
 - [Hive Architecture](https://cwiki.apache.org/confluence/display/Hive/Design)
 - [What is Hive](https://www.jigsawacademy.com/blogs/business-analytics/what-is-hive/)
 - [Hadoop, Hive, Parquet, Hue and Docker](https://towardsdatascience.com/making-big-moves-in-big-data-with-hadoop-hive-parquet-hue-and-docker-320a52ca175)
+- [Installing Hive and Hadoop locally](https://sunchao.github.io/posts/2016-11-13-installing-hive-and-hadoop-locally.html)
