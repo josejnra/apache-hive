@@ -65,3 +65,7 @@ docker compose up -d
 - [What is Hive](https://www.jigsawacademy.com/blogs/business-analytics/what-is-hive/)
 - [Hadoop, Hive, Parquet, Hue and Docker](https://towardsdatascience.com/making-big-moves-in-big-data-with-hadoop-hive-parquet-hue-and-docker-320a52ca175)
 - [Installing Hive and Hadoop locally](https://sunchao.github.io/posts/2016-11-13-installing-hive-and-hadoop-locally.html)
+- [HDFS default config](https://hadoop.apache.org/docs/r3.4.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml)
+- [Hadoop CORE common default config](https://hadoop.apache.org/docs/r3.4.0/hadoop-project-dist/hadoop-common/core-default.xml)
+- [MapReduce default config](https://hadoop.apache.org/docs/r3.4.0/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml)
+- [YARN default config](https://hadoop.apache.org/docs/r3.4.0/hadoop-yarn/hadoop-yarn-common/yarn-default.xml)
