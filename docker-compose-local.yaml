@@ -80,6 +80,7 @@ services:
 
         echo "Starting hive metastore"
         schematool -initSchema -dbType postgres -passWord hive -userName hive
+
         tail -f /tmp/root/hive.log
     depends_on:
       - hdfs
