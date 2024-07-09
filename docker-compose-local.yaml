@@ -25,7 +25,7 @@ services:
         echo "Starting NameNode and DataNode..."
         hdfs --daemon start namenode
         hdfs --daemon start datanode
-      
+
         echo "Creating the HDFS directories required to execute MapReduce jobs..."
         hdfs dfs -mkdir /user
         hdfs dfs -mkdir /user/$$(whoami)
@@ -80,10 +80,18 @@ services:
 
         echo "Starting hive metastore"
         schematool -initSchema -dbType postgres -passWord hive -userName hive
+        # schematool -upgradeSchema -dbType postgres -passWord hive -userName hive
+        # schematool -info -dbType postgres -userName hive -passWord hive -verbose
+        # schematool -upgradeSchema -dbType postgres -dryRun
 
+        echo "Starting hiveserver2"
+        # hiveserver2
         tail -f /tmp/root/hive.log
     depends_on:
-      - hdfs
+      hdfs:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:16.3
@@ -92,6 +100,11 @@ services:
       POSTGRES_DB: metastore
       POSTGRES_USER: hive
       POSTGRES_PASSWORD: hive
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   #  pgadmin:
   #    image: dpage/pgadmin4:6.4

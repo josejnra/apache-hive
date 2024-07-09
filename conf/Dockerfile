@@ -1,23 +1,25 @@
+# hive requires java 8
+# https://github.com/apache/hive?tab=readme-ov-file#java
 FROM openjdk:8
 
 # --------------------------------------------
 # HADOOP CONFIG
 # --------------------------------------------
 RUN apt-get update && \
-apt-get upgrade -y && \
-apt-get install -y software-properties-common \
-ssh \
-pdsh \
-openssh-server \
-rsync \
-net-tools \
-vim \
-python3-pip
+    apt-get upgrade -y && \
+    apt-get install -y software-properties-common \
+        ssh \
+        pdsh \
+        openssh-server \
+        rsync \
+        net-tools \
+        vim \
+        python3-pip
 
 # create ssh
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
-chmod 0600 ~/.ssh/authorized_keys
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+    chmod 0600 ~/.ssh/authorized_keys
     
 # --------------------------------------------
 
